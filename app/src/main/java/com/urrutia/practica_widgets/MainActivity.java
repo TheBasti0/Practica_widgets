@@ -3,6 +3,8 @@ package com.urrutia.practica_widgets;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox cbRecomendado;
     private RatingBar ratingBarV;
     private boolean NombreOK = false;
+    private boolean RadioOK = false;
+    private String RbSelect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +33,34 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radioGroup);
         cbRecomendado = findViewById(R.id.cbRecomendacion);
         ratingBarV = findViewById(R.id.ratingBarV);
+
         // Estas opciones estan desabilitadas para no poder usarse antes de seleccionar una opcion
         ratingBarV.setEnabled(false);
         btnValorar.setEnabled(false);
         cbRecomendado.setEnabled(false);
+
+        btnValorar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nombre = etNombre.getText().toString();
+                float rating = ratingBarV.getRating();
+                boolean recomienda = cbRecomendado.isChecked();
+                if(RbSelect == "SI"){
+                    String LoRecomienda;
+                    if(recomienda==true){
+                        LoRecomienda="SI";
+                    }else{
+                        LoRecomienda = "NO";
+                    }
+                    Toast.makeText(MainActivity.this, "Nombre: "+nombre+"\nConoce Firefox: "+RbSelect+
+                            "\nRating: "+rating+"\nRecomiendas Firefox"+LoRecomienda,Toast.LENGTH_LONG).show();
+
+                }else{
+                    Toast.makeText(MainActivity.this, "Nombre: "+nombre+"\nConoce Firefox: "+RbSelect,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         // Utilizar el radioGroup para poder valorar las diferentes opciones presentes
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -41,31 +69,46 @@ public class MainActivity extends AppCompatActivity {
                 if(i == R.id.rbSi){
                     ratingBarV.setEnabled(true);
                     cbRecomendado.setEnabled(true);
-                }else{
+                    RbSelect = "SI";
+                }else {
                     ratingBarV.setRating(0);
                     ratingBarV.setEnabled(false);
                     cbRecomendado.setChecked(false);
                     cbRecomendado.setEnabled(false);
+                    RbSelect = "NO";
                 }
+                RadioOK = true;
                 if(NombreOK == true){
                     btnValorar.setEnabled(true);
                 }
 
             }
         });
-
-        etNombre.setOnKeyListener(new View.OnKeyListener() {
+        etNombre.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                Toast.makeText(MainActivity.this,"Texto : "+ etNombre.getText().toString(),Toast.LENGTH_SHORT).show();
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if(etNombre.getText().toString().length() < 3){
-                    etNombre.setError("El nombre es muy corto");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Toast.makeText(MainActivity.this, "Texto: "+charSequence,Toast.LENGTH_SHORT).show();
+
+                if(charSequence.length() < 3){
+                    etNombre.setError("El Nombre Es Muy Corto");
+                    NombreOK = false;
+                    btnValorar.setEnabled(false);
                 }else{
                     NombreOK = true;
+                    if(RadioOK == true){
+                        btnValorar.setEnabled(true);
+                    }
                 }
+            }
 
-                return false;
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }
