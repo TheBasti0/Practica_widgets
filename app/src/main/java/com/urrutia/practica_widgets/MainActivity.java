@@ -42,9 +42,10 @@ public class MainActivity extends AppCompatActivity {
         btnValorar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nombre = etNombre.getText().toString();
+                String nombre = etNombre.getText().toString().trim();
                 float rating = ratingBarV.getRating();
                 boolean recomienda = cbRecomendado.isChecked();
+
                 if(RbSelect == "SI"){
                     String LoRecomienda;
                     if(recomienda==true){
@@ -94,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 Toast.makeText(MainActivity.this, "Texto: "+charSequence,Toast.LENGTH_SHORT).show();
 
-                if(charSequence.length() < 3){
+
+                if(charSequence.toString().trim().length() < 3){
                     etNombre.setError("El Nombre Es Muy Corto");
                     NombreOK = false;
                     btnValorar.setEnabled(false);
